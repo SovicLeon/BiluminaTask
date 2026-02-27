@@ -5,6 +5,8 @@ const IMG_BASE = "https://cdn.babycenter.si/products/250x250";
 const sortPriceSelector = document.getElementById("sortPrice");
 const container = document.getElementById("articlesContainer");
 
+const loadingGIF = "public/loading.gif";
+
 // utilities
 const priceFormatter = new Intl.NumberFormat('de-DE', {
     style: 'currency',
@@ -26,14 +28,16 @@ function createElement(tag, className = "", text = "") {
 // render functions
 function renderArticles(articlesJson) {
     const obj = JSON.parse(articlesJson);
-
     container.innerHTML = "";
 
     Object.values(obj).forEach(article => {
         const articleEl = createElement("div", "article");
 
+        const imgSrc = IMG_BASE + (article.gallery?.[0]?.imageUrl ?? loadingGIF);
+        const price = formatPrice(article.price ?? 0);
+
         const img = createElement("img");
-        img.src = IMG_BASE + article.gallery[0].imageUrl;
+        img.src = imgSrc;
         img.alt = article.name;
         img.width = 250;
         img.height = 250;
@@ -44,9 +48,9 @@ function renderArticles(articlesJson) {
         stock.style.color = article.stock != 0 ? "green" : "red";
         stock.textContent = article.stock != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
 
-        const price = createElement("span", "", formatPrice(article.price));
+        const priceEl = createElement("span", "", price);
 
-        articleEl.append(img, name, stock, price);
+        articleEl.append(img, name, stock, priceEl);
         container.appendChild(articleEl);
     });
 }
@@ -56,7 +60,7 @@ function loadingElement() {
     const loader = createElement("div", "loadingElement");
 
     const img = createElement("img");
-    img.src = "public/loading.gif";
+    img.src = loadingGIF;
     img.alt = "Loading gif";
     img.width = 50;
     img.height = 50;
