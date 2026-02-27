@@ -1,5 +1,8 @@
 <?php
 
+// to do:
+// -sorting
+
 require_once "models/ad_model.php"; //uporabimo model Ad iz MVC
 require_once "controllers/ad_controller.php"; //vključimo API controller
 
@@ -28,11 +31,11 @@ else
     die();
 }*/
 // Odvisno od metode pokličemo ustrezen controller action
-switch($method){
+switch ($method) {
     case "GET":
-        // Če je v zahtevi nastavljen :id, kličemo akcijo show (en oglas), sicer pa index (vsi oglasi)
-        $ad_controller->index();
+        $sort = $_GET['sortPrice'] ?? null;
+        $ad_controller->index($sort);
         break;
-    default: 
+    default:
         break;
 }

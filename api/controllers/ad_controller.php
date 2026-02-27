@@ -1,10 +1,13 @@
 <?php
 
+// to do:
+// -sorting
+
 class ad_controller
 {
-    public function index()
+    public function index($sort = null)
     {
-        $ads = Ad::all();
+        $ads = Ad::all($sort);
 
         echo json_encode($ads);
     }
