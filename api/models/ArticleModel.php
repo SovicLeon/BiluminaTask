@@ -1,33 +1,33 @@
 <?php
 
+require_once "utils/sort/SortUtils.php";
+
 class Article
 {
-    public static function all($sort = null)
+    public static function all(?string $sort = null): array
     {
         $url = "https://egi.bilumina.com/mw/api/v1/items/get?key=bf84d5ef-7fe2-4609-8b75-49279dd3271e";
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_URL => $url,
+        ]);
 
         $result = curl_exec($ch);
 
-        $json_raw = json_decode($result, true);
-
-        $data = $json_raw['rootGroup']['groups'][2]['items'];
-
-        if ($sort === 'priceAsc') {
-            usort($data, function ($a, $b) {
-                return $a['price'] <=> $b['price'];
-            });
+        if ($result === false) {
+            throw new RuntimeException("Curl error: " . curl_error($ch));
         }
 
-        if ($sort === 'priceDesc') {
-            usort($data, function ($a, $b) {
-                return $b['price'] <=> $a['price'];
-            });
+        $jsonRaw = json_decode($result, true);
+
+        if (!isset($jsonRaw['rootGroup']['groups'][2]['items'])) {
+            return [];
         }
 
-        return $data;
+        $items = $jsonRaw['rootGroup']['groups'][2]['items'];
+
+        return SortUtils::sortByPrice($items, $sort);
     }
 }
