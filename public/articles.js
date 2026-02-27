@@ -1,4 +1,4 @@
-// constants
+// constants, globals
 const API_BASE = "api/";
 const IMG_BASE = "https://cdn.babycenter.si/products/250x250";
 
@@ -6,6 +6,8 @@ const sortPriceSelector = document.getElementById("sortPrice");
 const container = document.getElementById("articlesContainer");
 
 const loadingGIF = "public/loading.gif";
+
+let articlesArr = [];
 
 // utilities
 const priceFormatter = new Intl.NumberFormat('de-DE', {
@@ -26,15 +28,13 @@ function createElement(tag, className = "", text = "") {
 }
 
 // render functions
-function renderArticles(articlesJson) {
-    const obj = JSON.parse(articlesJson);
+function renderArticlesFromArray() {
     container.innerHTML = "";
 
-    Object.values(obj).forEach(article => {
+    articlesArr.forEach(article => {
         const articleEl = createElement("div", "article");
 
-        const imgSrc = IMG_BASE + (article.gallery?.[0]?.imageUrl ?? loadingGIF);
-        const price = formatPrice(article.price ?? 0);
+        const imgSrc = article.images?.[0]?.imageAddress ? IMG_BASE + article.images[0].imageAddress : loadingGIF;
 
         const img = createElement("img");
         img.src = imgSrc;
@@ -43,14 +43,13 @@ function renderArticles(articlesJson) {
         img.height = 250;
 
         const name = createElement("span", "", article.name);
+        const price = createElement("span", "", formatPrice(article.price));
 
         const stock = createElement("span", "");
         stock.style.color = article.stock != 0 ? "green" : "red";
         stock.textContent = article.stock != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
 
-        const priceEl = createElement("span", "", price);
-
-        articleEl.append(img, name, stock, priceEl);
+        articleEl.append(img, name, stock, price);
         container.appendChild(articleEl);
     });
 }
@@ -79,25 +78,31 @@ function renderError(message) {
     container.appendChild(errorEl);
 }
 
-
 // fetch functions
-async function fetchArticles(sortParam = "") {
+async function fetchArticlesAsObjects(sortParam = "") {
     try {
         const response = await fetch(API_BASE + sortParam);
         if (!response.ok) throw new Error("Network response was not ok");
-        const articles = await response.text();
-        return articles;
+
+        const rawData = await response.json();
+
+        articlesArr = Object.values(rawData).map(a => ({
+            name: a.name,
+            price: a.price ?? 0,
+            images: a.gallery?.map(img => ({ imageAddress: img.imageUrl })) ?? [],
+            stock: a.stock ?? 0
+        }));
+
+        renderArticlesFromArray();
     } catch (err) {
         console.error("Failed to load articles:", err);
         renderError("Napaka pri nalaganju artiklov.");
-        return null;
     }
 }
 
 async function loadArticles(sortParam = "") {
     container.replaceChildren(loadingElement());
-    const articles = await fetchArticles(sortParam);
-    if (articles) renderArticles(articles);
+    await fetchArticlesAsObjects(sortParam);
 }
 
 // event binding

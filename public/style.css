@@ -65,7 +65,7 @@ nav h1 {
 .article {
     display: inline-flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: space-between;
     padding: 16px;
     border-radius: 8px;
     background-color: #ECECEC;
