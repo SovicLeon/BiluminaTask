@@ -6,7 +6,7 @@
 - cURL (za pridobivanje podatkov iz zunanjega API-ja)
 - HTML5
 - CSS3
-- Vanilla JavaScript (ES6)
+- Vanilla JavaScript
 - XAMPP (Apache) za lokalni razvoj
 
 ---
