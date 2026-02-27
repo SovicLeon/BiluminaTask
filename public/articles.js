@@ -1,109 +1,112 @@
-// get elements
+// constants
+const API_BASE = "api/";
+const IMG_BASE = "https://cdn.babycenter.si/products/250x250";
+
 const sortPriceSelector = document.getElementById("sortPrice");
 const container = document.getElementById("articlesContainer");
 
-// initial load
-loadArticles("");
+// utilities
+const priceFormatter = new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency: 'EUR',
+    trailingZeroDisplay: 'stripIfInteger'
+});
 
-// sorting function
+function formatPrice(price) {
+    return priceFormatter.format(price);
+}
+
+function createElement(tag, className = "", text = "") {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text) el.textContent = text;
+    return el;
+}
+
+// render functions
+function renderArticles(articlesJson) {
+    const obj = JSON.parse(articlesJson);
+
+    container.innerHTML = "";
+
+    Object.values(obj).forEach(article => {
+        const articleEl = createElement("div", "article");
+
+        const img = createElement("img");
+        img.src = IMG_BASE + article.gallery[0].imageUrl;
+        img.alt = article.name;
+        img.width = 250;
+        img.height = 250;
+
+        const name = createElement("span", "", article.name);
+
+        const stock = createElement("span", "");
+        stock.style.color = article.stock != 0 ? "green" : "red";
+        stock.textContent = article.stock != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
+
+        const price = createElement("span", "", formatPrice(article.price));
+
+        articleEl.append(img, name, stock, price);
+        container.appendChild(articleEl);
+    });
+}
+
+function loadingElement() {
+    const wrapper = createElement("div", "loadingElementWrapper");
+    const loader = createElement("div", "loadingElement");
+
+    const img = createElement("img");
+    img.src = "public/loading.gif";
+    img.alt = "Loading gif";
+    img.width = 50;
+    img.height = 50;
+
+    const text = createElement("span", "", "Loading...");
+
+    loader.append(img, text);
+    wrapper.appendChild(loader);
+
+    return wrapper;
+}
+
+function renderError(message) {
+    container.innerHTML = "";
+    const errorEl = createElement("div", "errorMessage", message);
+    container.appendChild(errorEl);
+}
+
+
+// fetch functions
+async function fetchArticles(sortParam = "") {
+    try {
+        const response = await fetch(API_BASE + sortParam);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const articles = await response.text();
+        return articles;
+    } catch (err) {
+        console.error("Failed to load articles:", err);
+        renderError("Napaka pri nalaganju artiklov.");
+        return null;
+    }
+}
+
+async function loadArticles(sortParam = "") {
+    container.replaceChildren(loadingElement());
+    const articles = await fetchArticles(sortParam);
+    if (articles) renderArticles(articles);
+}
+
+// event binding
 function selectSortPrice() {
     const params = new URLSearchParams();
     params.set("sortPrice", sortPriceSelector.value);
     loadArticles("?" + params.toString());
 }
 
-async function loadArticles(sortParam = "") {
-    // clear container, set loader
-    container.replaceChildren(loadingElement());
-
-    // fetch api
-    try {
-        const response = await fetch("api/" + sortParam);
-        const articles = await response.text();
-        renderArticles(articles);
-    } catch (err) {
-        console.error("Failed to load articles:", err);
-    }
+function bindEvents() {
+    sortPriceSelector.addEventListener("change", selectSortPrice);
 }
 
-function renderArticles(articles) {
-    const obj = JSON.parse(articles);
-
-    //console.log(obj);
-
-    // clear container
-    container.innerHTML = "";
-
-    for (const article of Object.values(obj)) {
-        // base div
-        const articleElement = document.createElement("div");
-        articleElement.className = "article";
-
-        // image element
-        const img = document.createElement("img");
-        img.src = "https://cdn.babycenter.si/products/250x250" + article.gallery[0].imageUrl;
-        img.alt = article.name;
-        img.width = 250;
-        img.height = 250;
-
-        // name span
-        const name = document.createElement("span");
-        name.textContent = article.name;
-
-        // stock span
-        const stock = document.createElement("span");
-        stock.style.color = article.stock != 0 ? "green" : "red";
-        stock.textContent = article.stock != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
-
-        // price span
-        const price = document.createElement("span");
-        price.textContent = priceFormatter.format(article.price);
-
-        // append elements to article
-        articleElement.appendChild(img);
-        articleElement.appendChild(name);
-        articleElement.appendChild(stock);
-        articleElement.appendChild(price);
-
-        // append article to container
-        container.appendChild(articleElement);
-    }
-}
-
-function loadingElement() {
-    // base wrapper
-    const loadingElementWrapper = document.createElement("div");
-    loadingElementWrapper.className = "loadingElementWrapper";
-
-    // base div
-    const loadingElement = document.createElement("div");
-    loadingElement.className = "loadingElement";
-
-    // img element
-    const img = document.createElement("img");
-    img.src = "public/loading.gif";
-    img.alt = "Loading gif";
-    img.width = 50;
-    img.height = 50;
-
-    // name span
-    const name = document.createElement("span");
-    name.textContent = "Loading...";
-    name.style.height = "81px";
-
-    // append elements to article
-    loadingElement.appendChild(img);
-    loadingElement.appendChild(name);
-
-    loadingElementWrapper.appendChild(loadingElement);
-
-    // return article
-    return loadingElementWrapper;
-}
-
-// price formatter
-const priceFormatter = new Intl.NumberFormat('de-DE', {
-    style: 'currency',
-    currency: 'EUR',
-    trailingZeroDisplay: 'stripIfInteger'
-});
+// initial load
+bindEvents();
+loadArticles("");
