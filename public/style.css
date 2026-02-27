@@ -22,7 +22,8 @@ nav {
 }
 
 nav h1 {
-    color: #ffffff;;
+    color: #ffffff;
+    margin-left: 16px;
 }
 
 .filterWrapper {
@@ -92,6 +93,12 @@ nav h1 {
     flex-direction: column;
     gap: 8px;
     padding: 16px;
+}
+
+.errorMessage {
+    width: stretch;
+    text-align: center;
+    margin: 16px;
 }
 
 /* Tablet: 614px - 1023px */
