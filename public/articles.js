@@ -49,14 +49,18 @@ function renderArticlesFromArray() {
 
         const name = createElement("span", "", article.name);
         const price = createElement("span", "", formatPrice(article.price));
-
-        const stock = createElement("span", "");
-        stock.style.color = article.stock != 0 ? "green" : "red";
-        stock.textContent = article.stock != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
+        const stock = createStockElement(article.stock);
 
         articleEl.append(img, name, stock, price);
         container.appendChild(articleEl);
     });
+}
+
+function createStockElement(stockValue) {
+    const stock = createElement("span", "");
+    stock.style.color = stockValue != 0 ? "green" : "red";
+    stock.textContent = stockValue != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
+    return stock;
 }
 
 function loadingElement() {
