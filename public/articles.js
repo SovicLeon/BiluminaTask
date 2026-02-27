@@ -9,6 +9,9 @@ const loadingGIF = "public/loading.gif";
 
 let articlesArr = [];
 
+const imageWidth = 250;
+const imageHeight= 250;
+
 // utilities
 const priceFormatter = new Intl.NumberFormat('de-DE', {
     style: 'currency',
@@ -44,8 +47,8 @@ function renderArticlesFromArray() {
         const img = createElement("img");
         img.src = imgSrc;
         img.alt = article.name;
-        img.width = 250;
-        img.height = 250;
+        img.width = imageWidth;
+        img.height = imageHeight;
 
         const name = createElement("span", "", article.name);
         const price = createElement("span", "", formatPrice(article.price));
@@ -58,7 +61,7 @@ function renderArticlesFromArray() {
 
 function createStockElement(stockValue) {
     const stock = createElement("span", "");
-    stock.style.color = stockValue != 0 ? "green" : "red";
+    stock.className = stockValue != 0 ? "stock in-stock" : "stock out-of-stock";
     stock.textContent = stockValue != 0 ? "Na zalogi" : "Trenutno ni na zalogi";
     return stock;
 }
@@ -116,6 +119,7 @@ async function loadArticles(sortParam = "") {
 
 // event binding
 function selectSortPrice() {
+    if (!sortPriceSelector) return;
     const params = new URLSearchParams();
     if (sortPriceSelector.value === "default") {
         loadArticles("");
@@ -126,6 +130,7 @@ function selectSortPrice() {
 }
 
 function bindEvents() {
+    if (!sortPriceSelector) return;
     sortPriceSelector.addEventListener("change", selectSortPrice);
 }
 

@@ -102,6 +102,9 @@ nav h1 {
     margin: 16px;
 }
 
+.stock.in-stock { color: green; }
+.stock.out-of-stock { color: red; }
+
 /* Tablet: 614px - 1023px */
 @media (max-width: 1023px) {
     .sortPriceWrapper {
