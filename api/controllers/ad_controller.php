@@ -1,8 +1,5 @@
 <?php
 
-// to do:
-// -sorting
-
 class ad_controller
 {
     public function index($sort = null)

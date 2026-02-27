@@ -1,8 +1,5 @@
 <?php
 
-// to do:
-// -sorting
-
 /*class Ad
 {
     public static function all()

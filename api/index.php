@@ -1,8 +1,5 @@
 <?php
 
-// to do:
-// -sorting
-
 require_once "models/ad_model.php"; //uporabimo model Ad iz MVC
 require_once "controllers/ad_controller.php"; //vključimo API controller
 
