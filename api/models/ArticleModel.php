@@ -1,10 +1,10 @@
 <?php
 
 require_once "utils/sort/SortUtils.php";
+require_once "ArticleDTO.php";
 
 class Article
 {
-
     private const MAIN_GROUP_INDEX = 1;
 
     public static function all(?string $sort = null): array
@@ -31,6 +31,22 @@ class Article
 
         $items = $jsonRaw['rootGroup']['groups'][self::MAIN_GROUP_INDEX]['items'];
 
-        return SortUtils::sortByPrice($items, $sort);
+        $articlesArr = array_map(function ($item) {
+            $gallery = [];
+            if (!empty($item['gallery'])) {
+                foreach ($item['gallery'] as $img) {
+                    $gallery[] = ['imageUrl' => $img['imageUrl'] ?? ''];
+                }
+            }
+
+            return new ArticleDTO(
+                $item['name'] ?? '',
+                (float)($item['price'] ?? 0),
+                $gallery,
+                (int)($item['stock'] ?? 0)
+            );
+        }, $items);
+
+        return SortUtils::sortByPrice($articlesArr, $sort);
     }
 }
