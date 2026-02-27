@@ -35,7 +35,7 @@ function renderArticlesFromArray() {
     container.innerHTML = "";
 
     if (articlesArr.length == 0) {
-        renderError("Ni zaloge.");
+        renderError("Ni artiklov.");
         return;
     }
 
@@ -76,7 +76,7 @@ function loadingElement() {
     img.width = 50;
     img.height = 50;
 
-    const text = createElement("span", "", "Loading...");
+    const text = createElement("span", "", "Nalagam...");
 
     loader.append(img, text);
     wrapper.appendChild(loader);
