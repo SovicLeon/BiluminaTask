@@ -1,38 +1,31 @@
 <?php
 
-require_once "models/ad_model.php"; //uporabimo model Ad iz MVC
-require_once "controllers/ad_controller.php"; //vključimo API controller
+// import model and controller
+require_once "models/ArticleModel.php";
+require_once "controllers/ArticleController.php";
 
-$ad_controller = new ad_controller;
+$articleController = new ArticleController;
 
-//nastavimo glave odgovora tako, da brskalniku sporočimo, da mu vračamo json
+// set header
 header('Content-Type: application/json');
-//omgočimo zahtevo iz različnih domen
+// grant access to all origins
 header("Access-Control-Allow-Origin: *");
-// Kot odgovor iz API-ja izpišemo JSON string s pomočjo funkcije json_encode
 
-// preberemo HTTP metodo iz zahteve
+// set method
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Razberemo parametre iz URL - razbijemo URL po '/'
-// tako dobimo iz zahteve api/first/second/third => $request = array("first", "second", "third")
-/*if(isset($_SERVER['PATH_INFO']))
-	$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-else
-	$request="";
-*/
-// Najprej potrebujemo 'router', ki bo razpoznal zahtevo in sprožil ustrezne akcije
-// Preverimo, če je v url-ju prva pot 'ads'
-/*if(!isset($request[0]) || $request[0] != "ads"){
-    echo json_encode((object)["status"=>"404", "message"=>"Not found"]);
-    die();
-}*/
-// Odvisno od metode pokličemo ustrezen controller action
+// based on method call controller or error response
 switch ($method) {
     case "GET":
         $sort = $_GET['sortPrice'] ?? null;
-        $ad_controller->index($sort);
+        $articleController->index($sort);
         break;
     default:
+        http_response_code(405);
+        echo json_encode((object)[
+            "status" => "405",
+            "message" => "Method not allowed"
+        ]);
+        break;
         break;
 }
