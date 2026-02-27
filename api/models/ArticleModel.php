@@ -5,10 +5,12 @@ require_once "ArticleDTO.php";
 
 class Article
 {
+    // select group
     private const MAIN_GROUP_INDEX = 1;
 
     public static function all(?string $sort = null): array
     {
+        // fetch items from api
         $url = "https://egi.bilumina.com/mw/api/v1/items/get?key=bf84d5ef-7fe2-4609-8b75-49279dd3271e";
 
         $ch = curl_init();
@@ -31,6 +33,7 @@ class Article
 
         $items = $jsonRaw['rootGroup']['groups'][self::MAIN_GROUP_INDEX]['items'];
 
+        // map to array
         $articlesArr = array_map(function ($item) {
             $gallery = [];
             if (!empty($item['gallery'])) {
@@ -47,6 +50,7 @@ class Article
             );
         }, $items);
 
+        // sort and return
         return SortUtils::sortByPrice($articlesArr, $sort);
     }
 }
