@@ -4,6 +4,9 @@ require_once "utils/sort/SortUtils.php";
 
 class Article
 {
+
+    private const MAIN_GROUP_INDEX = 3;
+
     public static function all(?string $sort = null): array
     {
         $url = "https://egi.bilumina.com/mw/api/v1/items/get?key=bf84d5ef-7fe2-4609-8b75-49279dd3271e";
@@ -22,11 +25,11 @@ class Article
 
         $jsonRaw = json_decode($result, true);
 
-        if (!isset($jsonRaw['rootGroup']['groups'][2]['items'])) {
+        if (!isset($jsonRaw['rootGroup']['groups'][self::MAIN_GROUP_INDEX]['items'])) {
             return [];
         }
 
-        $items = $jsonRaw['rootGroup']['groups'][2]['items'];
+        $items = $jsonRaw['rootGroup']['groups'][self::MAIN_GROUP_INDEX]['items'];
 
         return SortUtils::sortByPrice($items, $sort);
     }
