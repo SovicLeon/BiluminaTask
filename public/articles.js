@@ -103,6 +103,10 @@ async function loadArticles(sortParam = "") {
 // event binding
 function selectSortPrice() {
     const params = new URLSearchParams();
+    if (sortPriceSelector.value === "default") {
+        loadArticles("");
+        return;
+    }
     params.set("sortPrice", sortPriceSelector.value);
     loadArticles("?" + params.toString());
 }
