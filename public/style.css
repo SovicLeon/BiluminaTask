@@ -21,6 +21,10 @@ nav {
     background-color: #3B8BEB;
 }
 
+nav h1 {
+    color: #ffffff;;
+}
+
 .filterWrapper {
     display: flex;
     justify-content: center;
@@ -88,4 +92,26 @@ nav {
     flex-direction: column;
     gap: 8px;
     padding: 16px;
+}
+
+/* Tablet: 768px - 1023px */
+@media (max-width: 1023px) {
+    .sortPriceWrapper {
+        width: 614px;
+    }
+
+    .articlesContainer {
+        width: 614px;
+    }
+}
+
+/* Mobile: up to 767px */
+@media (max-width: 614px) {
+    .sortPriceWrapper {
+        width: 290px;
+    }
+
+    .articlesContainer {
+        width: 290px;
+    }
 }
