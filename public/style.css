@@ -94,7 +94,7 @@ nav h1 {
     padding: 16px;
 }
 
-/* Tablet: 768px - 1023px */
+/* Tablet: 614px - 1023px */
 @media (max-width: 1023px) {
     .sortPriceWrapper {
         width: 614px;
@@ -105,7 +105,7 @@ nav h1 {
     }
 }
 
-/* Mobile: up to 767px */
+/* Mobile: up to 614px */
 @media (max-width: 614px) {
     .sortPriceWrapper {
         width: 290px;
