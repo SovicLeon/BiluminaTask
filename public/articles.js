@@ -31,6 +31,11 @@ function createElement(tag, className = "", text = "") {
 function renderArticlesFromArray() {
     container.innerHTML = "";
 
+    if (articlesArr.length == 0) {
+        renderError("Ni zaloge.");
+        return;
+    }
+
     articlesArr.forEach(article => {
         const articleEl = createElement("div", "article");
 
@@ -87,7 +92,7 @@ async function fetchArticlesAsObjects(sortParam = "") {
         const rawData = await response.json();
 
         articlesArr = Object.values(rawData).map(a => ({
-            name: a.name,
+            name: a.name ?? "",
             price: a.price ?? 0,
             images: a.gallery?.map(img => ({ imageAddress: img.imageUrl })) ?? [],
             stock: a.stock ?? 0

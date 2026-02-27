@@ -5,7 +5,7 @@ require_once "utils/sort/SortUtils.php";
 class Article
 {
 
-    private const MAIN_GROUP_INDEX = 3;
+    private const MAIN_GROUP_INDEX = 1;
 
     public static function all(?string $sort = null): array
     {
